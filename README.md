@@ -55,4 +55,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Author
 
-- **Elias Yidnekachew** - [Github](https://github.com/ElyasYid)   [Email](elyassayle27@gmail.com)
+- **Elias Yidnekachew** - [Github](https://github.com/ElyasYid)
