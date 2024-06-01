@@ -6,36 +6,34 @@ from threading import Thread
 import tkinter.ttk as ttk
 
 class ToolTip:
-    def __init__(self, widget):
+    def __init__(self, widget, text):
         self.widget = widget
-        self.tipwindow = None
+        self.text = text
+        self.tip_window = None
 
-    def showtip(self, text):
-        if self.tipwindow or not text:
-            return
-        x, y, cx, cy = self.widget.bbox("insert")
-        x = x + self.widget.winfo_rootx() + 27
-        y = y + cy + self.widget.winfo_rooty() + 27
-        self.tipwindow = tw = tk.Toplevel(self.widget)
-        tw.wm_overrideredirect(1)
-        tw.wm_geometry("+%d+%d" % (x, y))
-        label = tk.Label(tw, text=text, justify=tk.LEFT,
-                      background="#ffffe0", relief=tk.SOLID, borderwidth=1,
-                      font=("tahoma", "8", "normal"))
+    def showtip(self, event=None):
+        x, y, _, _ = self.widget.bbox("insert")
+        x += self.widget.winfo_rootx() + 25
+        y += self.widget.winfo_rooty() + 25
+
+        self.tip_window = tk.Toplevel(self.widget)
+        self.tip_window.wm_overrideredirect(True)
+        self.tip_window.wm_geometry(f"+{x}+{y}")
+
+        label = tk.Label(self.tip_window, text=self.text, background="#ffffe0", relief=tk.SOLID, borderwidth=1, font=("Helvetica", 8))
         label.pack(ipadx=1)
 
-    def hidetip(self):
-        tw = self.tipwindow
-        self.tipwindow = None
-        if tw:
-            tw.destroy()
+    def hide_tip(self, event=None):
+        if self.tip_window:
+            self.tip_window.destroy()
+            self.tip_window = None
 
 def create_tooltip(widget, text):
-    tool_tip = ToolTip(widget)
+    tool_tip = ToolTip(widget, text)
     def enter(event):
-        tool_tip.showtip(text)
+        tool_tip.showtip()
     def leave(event):
-        tool_tip.hidetip()
+        tool_tip.hide_tip()
     widget.bind('<Enter>', enter)
     widget.bind('<Leave>', leave)
 
@@ -92,29 +90,49 @@ def compress_image():
 # Create the main window
 root = tk.Tk()
 root.title("PixelPress")
+root.configure(bg="lightblue")
 
-# Create and place widgets
-tk.Label(root, text="Choose Format:").grid(row=0, column=0, padx=10, pady=10)
+# Create a Canvas widget to act as the background
+canvas = tk.Canvas(root, bg="lightblue")
+canvas.pack(fill=tk.BOTH, expand=True)
+
+# Create and place widgets inside the Canvas
+frame = tk.Frame(canvas, bg="lightblue")
+frame.pack(padx=10, pady=10, fill=tk.BOTH, expand=True)
+
+label_format = tk.Label(frame, text="Choose Format:", bg="lightblue")
+label_format.grid(row=0, column=0, padx=10, pady=10, sticky="w")
 format_var = tk.StringVar(value="JPEG")
 format_options = ["JPEG", "PNG", "GIF", "WEBP", "BMP", "TIFF"]
-format_menu = ttk.Combobox(root, textvariable=format_var, values=format_options)
-format_menu.grid(row=0, column=1, padx=10, pady=10)
+format_menu = ttk.Combobox(frame, textvariable=format_var, values=format_options)
+format_menu.grid(row=0, column=1, padx=10, pady=10, sticky="ew")
 
-tk.Label(root, text="Quality:").grid(row=1, column=0, padx=10, pady=10)
-quality_scale = tk.Scale(root, from_=0, to_=100, orient=tk.HORIZONTAL)
+label_quality = tk.Label(frame, text="Quality:", bg="lightblue")
+label_quality.grid(row=1, column=0, padx=10, pady=10, sticky="w")
+quality_scale = tk.Scale(frame, from_=0, to_=100, orient=tk.HORIZONTAL)
 quality_scale.set(85)
-quality_scale.grid(row=1, column=1, padx=10, pady=10)
+quality_scale.grid(row=1, column=1, padx=10, pady=10, sticky="ew")
 
+label_tiff = tk.Label(frame, text="TIFF Compression:", bg="lightblue")
+label_tiff.grid(row=2, column=0, padx=10, pady=10, sticky="w")
 tiff_compression_var = tk.StringVar(value="tiff_lzw")
-tk.Label(root, text="TIFF Compression:").grid(row=2, column=0, padx=10, pady=10)
-tiff_compression_menu = ttk.Combobox(root, textvariable=tiff_compression_var, values=["tiff_lzw", "tiff_jpeg", "tiff_adobe_deflate"])
-tiff_compression_menu.grid(row=2, column=1, padx=10, pady=10)
+tiff_compression_menu = ttk.Combobox(frame, textvariable=tiff_compression_var, values=["tiff_lzw", "tiff_jpeg", "tiff_adobe_deflate"])
+tiff_compression_menu.grid(row=2, column=1, padx=10, pady=10, sticky="ew")
 
-compress_button = tk.Button(root, text="Compress Image", command=compress_image)
+compress_button = tk.Button(frame, text="Compress Image", command=compress_image, bg="lightblue")
 compress_button.grid(row=3, column=0, columnspan=2, padx=10, pady=10)
 
-progress_bar = ttk.Progressbar(root, mode='indeterminate')
-progress_bar.grid(row=4, column=0, columnspan=2, padx=10, pady=10)
+progress_bar = ttk.Progressbar(frame, mode='indeterminate')
+progress_bar.grid(row=4, column=0, columnspan=2, padx=10, pady=10, sticky="ew")
+
+# Configure column and row weights for responsiveness
+frame.columnconfigure(0, weight=1)
+frame.columnconfigure(1, weight=2)
+frame.rowconfigure(0, weight=1)
+frame.rowconfigure(1, weight=1)
+frame.rowconfigure(2, weight=1)
+frame.rowconfigure(3, weight=1)
+frame.rowconfigure(4, weight=1)
 
 # Add tooltips
 create_tooltip(format_menu, "Select the image format you want to compress to.")
