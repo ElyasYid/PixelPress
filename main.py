@@ -92,6 +92,13 @@ root = tk.Tk()
 root.title("PixelPress")
 root.configure(bg="lightblue")
 
+# Set the icon
+icon_path = 'pp.ico'  # Replace with your icon file path
+if os.path.exists(icon_path):
+    root.iconbitmap(icon_path)
+else:
+    print(f"Icon file '{icon_path}' not found. Skipping icon setup.")
+
 # Create a Canvas widget to act as the background
 canvas = tk.Canvas(root, bg="lightblue")
 canvas.pack(fill=tk.BOTH, expand=True)
