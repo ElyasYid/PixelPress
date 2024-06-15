@@ -1,5 +1,7 @@
 # PixelPress - Image Compression Tool
 
+![pixelpress1](https://github.com/ElyasYid/PixelPress/assets/140306064/5d995cd6-3baf-4c1f-aa6d-11731fbb3125)
+
 PixelPress is a simple image compression tool built using Python and Tkinter. It allows users to compress images in various formats such as JPEG, PNG, GIF, WEBP, BMP, and TIFF.
 
 ## Features
@@ -55,4 +57,4 @@ This project is licensed under the GNU General Public License - see the [LICENSE
 
 ## Author
 
-- **Elias Yidnekachew** - [Github](https://github.com/ElyasYid)
+- **Elias Yidnekachew** - [Github](https://github.com/ElyasYid), [LinkedIn](https://www.linkedin.com/in/elias-yidnekachew)
